@@ -18,8 +18,8 @@ public class Game implements org.newdawn.slick.Game {
 	Random rand;
 	ArrayList<Color> colors = new ArrayList<Color>();
 	List<Board> smallBoards;
-	String tempNum;
-	byte turn;
+	String message;
+	int turn, nextCell;
 
 	public static void main(String[] args) {
 		try {
@@ -32,25 +32,6 @@ public class Game implements org.newdawn.slick.Game {
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
-
-		/*
-		 * int selection; Player cPlayer = p1; while (board.getWinner() == 0 &&
-		 * !board.isFull()) { if (turn%2 == 0) { // 0, 2, 4, etc is P1. 1, 3, 5,
-		 * etc is P2. cPlayer = p1; } else { cPlayer = p2; } System.out
-		 * .println(cPlayer.getName() + ", please enter a position."); selection
-		 * = cPlayer.getMove(); while (selection < 0 || selection > 8 ||
-		 * !board.isEmpty(selection)) {
-		 * System.out.println("Invalid input. Try again."); selection =
-		 * cPlayer.getMove(); } board.setCell(selection, (turn%2)+1);
-		 * printBoard(board); turn++; } int winner = board.getWinner(); if
-		 * (winner == 0) {
-		 * System.out.println("Draw! Do both of you win... or neither?"); } else
-		 * { if (winner == 1) { System.out.println("Congratulations " +
-		 * p1.getName() + ", you win!"); } else if (winner == 2){
-		 * System.out.println("Congratulations " + p2.getName() + ", you win!");
-		 * } }
-		 */
-
 	}
 
 	@Override
@@ -58,21 +39,34 @@ public class Game implements org.newdawn.slick.Game {
 		colors.add(new Color(218, 226, 230));
 		colors.add(new Color(173, 0, 20));
 		colors.add(new Color(0, 32, 173));
-
-		tempNum = " ";
-
-		board = new Board();
+		colors.add(new Color(10,242,64));
 		p1 = new Player("Player 1");
 		p2 = new Player("Player 2");
+		gc.getGraphics().setBackground(colors.get(0));
+
+		newGame();
+		
+
+		
+	}
+	public void newGame(){
+		nextCell = 9;
+		message = " ";
+		board = new Board();		
+		turn = 1;
+		cPlayer = p1;
+		smallBoards = new ArrayList<Board>(9);
+		for (int i = 0; i < 9; i++) {
+			smallBoards.add(new Board());
+		}nextCell = 9;
+		message = " ";
+		board = new Board();		
 		turn = 1;
 		cPlayer = p1;
 		smallBoards = new ArrayList<Board>(9);
 		for (int i = 0; i < 9; i++) {
 			smallBoards.add(new Board());
 		}
-
-		gc.getGraphics().setBackground(colors.get(0));
-
 	}
 
 	@Override
@@ -92,9 +86,20 @@ public class Game implements org.newdawn.slick.Game {
 		g.drawLine(50, 450, 650, 450);
 		g.drawLine(250, 50, 250, 650);
 		g.drawLine(450, 50, 450, 650);
-
-		g.drawString(tempNum + " ", 700, 400);
+		g.setColor(colors.get(turn));
+		g.drawString(message, 700, 50);
 		int bigI = 0;
+		g.setColor(colors.get(3));
+		if (nextCell == 9) {
+			g.drawRect(50, 50, 600, 600);
+		} else {
+			g.drawRect(60 + (nextCell%3)*200,60+(nextCell/3)*200, 180, 180);
+		}
+		g.setColor(Color.red);
+		g.fillRect(700, 620, 80, 30);
+		g.setColor(Color.white);
+		g.drawString("RESET", 715, 625);
+		
 		for (int y = 50; y <= 450; y += 200) {
 			for (int x = 50; x <= 450; x += 200) {
 				Board currentBoard = smallBoards.get(bigI);
@@ -138,35 +143,53 @@ public class Game implements org.newdawn.slick.Game {
 	@Override
 	public void update(GameContainer gc, int arg1) throws SlickException {
 		Input input = gc.getInput();
+
 		if (board.getWinner() == 0) {
+			cPlayer = (turn == 1) ? p1 : p2;
+			message = cPlayer.getName() + "'s turn.";
 			if (input.isMousePressed(input.MOUSE_LEFT_BUTTON)) {
 				int mx = input.getMouseX();
 				int my = input.getMouseY();
 				if (mx > 50 && mx < 650 && my > 50 && my < 650) { // in grid
-					
+
 					int bigI = (mx - 50) / 200 + 3 * ((my - 50) / 200); // bigarrayindex
-					int xOffset = 75 + (bigI % 3) * 200;
-					int yOffset = 75 + (bigI / 3) * 200;
-					if (mx > xOffset && mx < xOffset+150 && my > yOffset && my < yOffset+150){
-					int i = (mx - xOffset)/50 + 3*((my-yOffset)/50);
-					Board currentBoard = smallBoards.get(bigI);
-					if (currentBoard.getWinner() == 0 && currentBoard.isEmpty(i)){
-						currentBoard.setCell(i, turn);
+					if (bigI == nextCell || nextCell == 9) {
+						int xOffset = 75 + (bigI % 3) * 200;
+						int yOffset = 75 + (bigI / 3) * 200;
+						if (mx > xOffset && mx < xOffset + 150 && my > yOffset
+								&& my < yOffset + 150) {
+							int i = (mx - xOffset) / 50 + 3
+									* ((my - yOffset) / 50);
+							Board currentBoard = smallBoards.get(bigI);
+							if (currentBoard.getWinner() == 0
+									&& currentBoard.isEmpty(i)) {
+								currentBoard.setCell(i, turn);
+								turn = turn % 2 + 1;
+								nextCell = i;
+								if (smallBoards.get(nextCell).getWinner() != 0) {
+									nextCell = 9;
+								}
+								if (currentBoard.getWinner() != 0) {
+									board.setCell(bigI,
+											currentBoard.getWinner());
+								}
+							}
+
+						}
 					}
-					
-					
-					
-					tempNum = mx + "  " + my + "  " + bigI + "  " + i;
-					}
-					// gc.getGraphics().drawString(bigI + " ", 700, 600);
+
+				} else if (mx > 700 && mx < 780 && my > 620 && my < 650){
+					newGame();
 				}
 
 			}
+		} else if (board.getWinner() == 1) {
+			turn = 1; // necessary for colours
+			message = p1.getName() + " wins!\nClick restart to play again.";
+		} else if (board.getWinner() == 2) {
+			turn = 2;
+			message = p2.getName() + " wins!\nClick restart to play again.";
 		}
-		smallBoards.get(1).setCell(0, 2);
-		smallBoards.get(1).setCell(2, 2);
-		smallBoards.get(8).setCell(0, 1);
-		smallBoards.get(8).setCell(4, 1);
 
 	}
 
