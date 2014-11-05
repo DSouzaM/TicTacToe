@@ -1,5 +1,3 @@
-import java.util.Random;
-
 public class Board {
 	private int winner;
 	private int[] cells;

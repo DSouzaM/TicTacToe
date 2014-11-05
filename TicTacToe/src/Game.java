@@ -1,21 +1,18 @@
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Random;
 
-import net.java.games.input.Mouse;
+
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.MouseListener;
 import org.newdawn.slick.SlickException;
 
 public class Game implements org.newdawn.slick.Game {
 	Board board;
 	Player p1, p2, cPlayer;
-	Random rand;
 	ArrayList<Color> colors = new ArrayList<Color>();
 	List<Board> smallBoards;
 	String message;
