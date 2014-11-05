@@ -1,3 +1,4 @@
+package com.dsouza.ticTacToe;
 import java.util.Scanner;
 
 public class Player {
