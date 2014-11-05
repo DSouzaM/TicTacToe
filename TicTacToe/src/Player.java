@@ -12,7 +12,7 @@ public class Player {
 		name = "Player";
 	}
 
-	int getMove() { // for now this is unnecessary, but the goal is to make this
+	int getMove() { // for now this is unnecessary for both , but the goal is to make this
 					// work past stdin input.
 		return input.nextInt();
 	}

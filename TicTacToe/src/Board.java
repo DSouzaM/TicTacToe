@@ -9,17 +9,6 @@ public class Board {
 		cells = new int[9];
 	}
 
-	/*
-	 * public static void main(String[] args) { //testing code Board b = new
-	 * Board(); System.out.println(b.getWinner()); Random r = new Random(); int
-	 * nextCell; int player = 1; while (b.getWinner() == 0 && !b.isFull()) {
-	 * nextCell = r.nextInt(9); if (b.isEmpty(nextCell)) { b.setCell(nextCell,
-	 * player); player = (player == 1) ? 2 : 1; for (int i = 0; i < 9; i++) {
-	 * System.out.print(b.getCell(i) + " "); if ((i + 1) % 3 == 0)
-	 * System.out.println(); } System.out.println(); } }
-	 * System.out.println(b.getWinner()); }
-	 */
-
 	int getWinner() {
 		if (winner == 0) {
 			for (int first = 0; first + 2 <= 8; first += 3) { // horizontal
