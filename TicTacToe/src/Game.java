@@ -20,6 +20,7 @@ public class Game implements org.newdawn.slick.Game {
 	List<Board> smallBoards;
 	String message;
 	int turn, nextCell;
+	int mx, my;
 
 	public static void main(String[] args) {
 		try {
@@ -39,28 +40,29 @@ public class Game implements org.newdawn.slick.Game {
 		colors.add(new Color(218, 226, 230));
 		colors.add(new Color(173, 0, 20));
 		colors.add(new Color(0, 32, 173));
-		colors.add(new Color(10,242,64));
+		colors.add(new Color(10, 242, 64));
 		p1 = new Player("Player 1");
 		p2 = new Player("Player 2");
 		gc.getGraphics().setBackground(colors.get(0));
-
+		mx = 0;
+		my = 0;
 		newGame();
-		
 
-		
 	}
-	public void newGame(){
+
+	public void newGame() {
 		nextCell = 9;
 		message = " ";
-		board = new Board();		
+		board = new Board();
 		turn = 1;
 		cPlayer = p1;
 		smallBoards = new ArrayList<Board>(9);
 		for (int i = 0; i < 9; i++) {
 			smallBoards.add(new Board());
-		}nextCell = 9;
+		}
+		nextCell = 9;
 		message = " ";
-		board = new Board();		
+		board = new Board();
 		turn = 1;
 		cPlayer = p1;
 		smallBoards = new ArrayList<Board>(9);
@@ -93,13 +95,14 @@ public class Game implements org.newdawn.slick.Game {
 		if (nextCell == 9) {
 			g.drawRect(50, 50, 600, 600);
 		} else {
-			g.drawRect(60 + (nextCell%3)*200,60+(nextCell/3)*200, 180, 180);
+			g.drawRect(60 + (nextCell % 3) * 200, 60 + (nextCell / 3) * 200,
+					180, 180);
 		}
 		g.setColor(Color.red);
 		g.fillRect(700, 620, 80, 30);
 		g.setColor(Color.white);
 		g.drawString("RESET", 715, 625);
-		
+
 		for (int y = 50; y <= 450; y += 200) {
 			for (int x = 50; x <= 450; x += 200) {
 				Board currentBoard = smallBoards.get(bigI);
@@ -143,13 +146,16 @@ public class Game implements org.newdawn.slick.Game {
 	@Override
 	public void update(GameContainer gc, int arg1) throws SlickException {
 		Input input = gc.getInput();
-
-		if (board.getWinner() == 0) {
+		mx = input.getMouseX();
+		my = input.getMouseY();
+		if (mx > 700 && mx < 780 && my > 620 && my < 650 && input.isMousePressed(input.MOUSE_LEFT_BUTTON)) {
+			newGame();
+		}
+		else if (board.getWinner() == 0) {
 			cPlayer = (turn == 1) ? p1 : p2;
 			message = cPlayer.getName() + "'s turn.";
 			if (input.isMousePressed(input.MOUSE_LEFT_BUTTON)) {
-				int mx = input.getMouseX();
-				int my = input.getMouseY();
+
 				if (mx > 50 && mx < 650 && my > 50 && my < 650) { // in grid
 
 					int bigI = (mx - 50) / 200 + 3 * ((my - 50) / 200); // bigarrayindex
@@ -178,8 +184,6 @@ public class Game implements org.newdawn.slick.Game {
 						}
 					}
 
-				} else if (mx > 700 && mx < 780 && my > 620 && my < 650){
-					newGame();
 				}
 
 			}
